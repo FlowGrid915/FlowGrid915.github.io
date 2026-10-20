@@ -111,15 +111,22 @@
       hoverPopup.remove();
     });
 
-    el.addEventListener('click', () => {
+   el.addEventListener('click', (e) => {
+      e.stopPropagation(); // PREVENTS MAP FROM INSTANTLY CLOSING THE POPUP
       hoverPopup.remove();
+      
       const badgeClass = liveData.status === 'nominal' ? 'status-nominal' : 'status-alert';
+      
+      // Enforce number type parsing to prevent .toFixed() exceptions if Firebase saved data as strings
+      const safeLat = Number(liveData.lat) || 0;
+      const safeLng = Number(liveData.lng) || 0;
+
       clickPopup.setLngLat(marker.getLngLat())
         .setHTML(`
           <div class="popup-title">Node: dev_node_01</div>
           <div class="metric-row"><span class="metric-label">Status</span><span class="status-badge ${badgeClass}">${liveData.status}</span></div>
           <div class="metric-row"><span class="metric-label">Pressure</span><span class="metric-val">${liveData.pressure_mpa} MPa</span></div>
-          <div class="metric-row"><span class="metric-label">Coordinates</span><span class="metric-val">${liveData.lat.toFixed(4)}, ${liveData.lng.toFixed(4)}</span></div>
+          <div class="metric-row"><span class="metric-label">Coordinates</span><span class="metric-val">${safeLat.toFixed(4)}, ${safeLng.toFixed(4)}</span></div>
         `)
         .addTo(map);
     });

@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>FlowGrid915 Telemetry Portal</title>
   
+  <!-- Mapbox GL JS -->
+  <script src='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js'></script>
+  <link href='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css' rel='stylesheet' />
+  
   <style>
     * {
       box-sizing: border-box;
@@ -15,63 +19,54 @@
     body {
       background-color: #0d1117;
       color: #c9d1d9;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      padding: 20px;
+      overflow: hidden;
+    }
+    #map {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 100%;
+      z-index: 0;
     }
     .card {
-      background: #161b22;
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(22, 27, 34, 0.9);
+      backdrop-filter: blur(10px);
       border: 1px solid #30363d;
       border-radius: 8px;
       padding: 24px;
-      width: 100%;
+      width: 90%;
       max-width: 420px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.8);
+      z-index: 1;
     }
-    h2 {
-      font-size: 1.1rem;
-      color: #58a6ff;
-      margin-bottom: 16px;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+    h2 { font-size: 1.1rem; color: #58a6ff; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .metric-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #21262d; }
+    .metric-label { color: #8b949e; }
+    .metric-val { font-weight: 600; font-family: monospace; font-size: 1.05rem; }
+    .status-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.85rem; text-transform: uppercase; }
+    .status-nominal { background: rgba(46, 160, 67, 0.15); color: #3fb950; border: 1px solid #2ea043; }
+    .status-alert { background: rgba(248, 81, 73, 0.15); color: #f85149; border: 1px solid #f85149; }
+    
+    /* Mapbox DOM Marker Styling */
+    .node-marker {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid #ffffff;
+      box-shadow: 0 0 12px rgba(0,0,0,0.8);
+      transition: background-color 0.3s ease;
     }
-    .metric-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 10px 0;
-      border-bottom: 1px solid #21262d;
-    }
-    .metric-label {
-      color: #8b949e;
-    }
-    .metric-val {
-      font-weight: 600;
-      font-family: monospace;
-      font-size: 1.05rem;
-    }
-    .status-badge {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 4px;
-      font-size: 0.85rem;
-      text-transform: uppercase;
-    }
-    .status-nominal {
-      background: rgba(46, 160, 67, 0.15);
-      color: #3fb950;
-      border: 1px solid #2ea043;
-    }
-    .status-alert {
-      background: rgba(248, 81, 73, 0.15);
-      color: #f85149;
-      border: 1px solid #f85149;
-    }
+    .marker-nominal { background-color: #3fb950; }
+    .marker-alert { background-color: #f85149; box-shadow: 0 0 15px #f85149; }
   </style>
 </head>
 <body>
+
+  <div id="map"></div>
 
   <div class="card">
     <h2>Telemetry: dev_node_01</h2>
@@ -84,12 +79,8 @@
       <span id="val-pressure" class="metric-val">-- MPa</span>
     </div>
     <div class="metric-row">
-      <span class="metric-label">Latitude</span>
-      <span id="val-lat" class="metric-val">--</span>
-    </div>
-    <div class="metric-row">
-      <span class="metric-label">Longitude</span>
-      <span id="val-lng" class="metric-val">--</span>
+      <span class="metric-label">Lat / Lng</span>
+      <span id="val-coords" class="metric-val">-- / --</span>
     </div>
   </div>
 
@@ -97,7 +88,22 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
     import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-database.js";
 
-    // REPLACE WITH YOUR EXACT FIREBASE PROJECT CONFIG
+    // 1. INITIALIZE MAPBOX
+    // Replace YOUR_MAPBOX_PUBLIC_TOKEN with your actual Mapbox key (starts with pk.ey)
+    mapboxgl.accessToken = 'YOUR_MAPBOX_PUBLIC_TOKEN';
+    
+    const map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/mapbox/dark-v11',
+      // REQUIRED FORMAT: [Longitude, Latitude]
+      // Replace these two numbers with the coordinates you extracted for the village.
+      center: [YOUR_LONGITUDE_HERE, YOUR_LATITUDE_HERE], 
+      zoom: 15.5,
+      projection: 'globe'
+    });
+
+    // 2. INITIALIZE FIREBASE
+    // Replace these values with your exact Firebase Project keys
     const firebaseConfig = {
       apiKey: "YOUR_API_KEY",
       authDomain: "flowgrid915.firebaseapp.com",
@@ -107,28 +113,53 @@
       messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
       appId: "YOUR_APP_ID"
     };
-
+    
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
-
-    // Reference the exact path created in the console
     const nodeRef = ref(db, 'nodes/dev_node_01');
 
-    // Real-time stream listener
+    // 3. CREATE MAP MARKER
+    const el = document.createElement('div');
+    el.className = 'node-marker marker-nominal';
+    
+    // Set initial dummy coordinates for the marker before Firebase loads
+    const marker = new mapboxgl.Marker(el)
+      .setLngLat([YOUR_LONGITUDE_HERE, YOUR_LATITUDE_HERE])
+      .addTo(map);
+
+    let isInitialLoad = true;
+
+    // 4. BIND TELEMETRY STREAM TO UI AND MAP
     onValue(nodeRef, (snapshot) => {
       const data = snapshot.val();
       if (!data) return;
 
+      // Update Card UI
       document.getElementById('val-pressure').textContent = `${data.pressure_mpa} MPa`;
-      document.getElementById('val-lat').textContent = data.lat;
-      document.getElementById('val-lng').textContent = data.lng;
-
+      document.getElementById('val-coords').textContent = `${data.lat.toFixed(4)} / ${data.lng.toFixed(4)}`;
+      
       const statusEl = document.getElementById('val-status');
       statusEl.textContent = data.status;
+      
+      // Update Marker Color and Status Badge
       if (data.status === 'nominal') {
         statusEl.className = 'status-badge status-nominal';
+        el.className = 'node-marker marker-nominal';
       } else {
         statusEl.className = 'status-badge status-alert';
+        el.className = 'node-marker marker-alert';
+      }
+
+      // Update Marker Coordinates and Fly Camera based on live database coordinates
+      marker.setLngLat([data.lng, data.lat]);
+      
+      if (isInitialLoad || data.status !== 'nominal') {
+        map.flyTo({
+          center: [data.lng, data.lat],
+          zoom: 15.5,
+          essential: true
+        });
+        isInitialLoad = false;
       }
     });
   </script>

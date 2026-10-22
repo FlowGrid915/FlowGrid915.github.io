@@ -13,6 +13,181 @@
     body { background-color: #0d1117; color: #c9d1d9; overflow: hidden; }
     #map { position: absolute; top: 0; bottom: 0; width: 100%; z-index: 0; }
     
+    /* Top-Left Hamburger Button */
+    #menu-btn {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      z-index: 20;
+      width: 44px;
+      height: 44px;
+      background: rgba(22, 27, 34, 0.95);
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+      backdrop-filter: blur(8px);
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+    #menu-btn:hover { border-color: #58a6ff; background: #1c2128; }
+    #menu-btn span {
+      display: block;
+      width: 20px;
+      height: 2px;
+      background-color: #c9d1d9;
+      border-radius: 2px;
+      transition: transform 0.25s ease, opacity 0.25s ease;
+    }
+    #menu-btn.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    #menu-btn.open span:nth-child(2) { opacity: 0; }
+    #menu-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* Collapsible Sidebar Drawer */
+    #sidebar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 260px;
+      background: rgba(13, 17, 23, 0.96);
+      backdrop-filter: blur(12px);
+      border-right: 1px solid #30363d;
+      z-index: 15;
+      padding: 76px 16px 24px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transform: translateX(-100%);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 8px 0 24px rgba(0,0,0,0.7);
+    }
+    #sidebar.open { transform: translateX(0); }
+    
+    .brand-header {
+      padding: 0 12px 16px 12px;
+      margin-bottom: 8px;
+      border-bottom: 1px solid #21262d;
+    }
+    .brand-title { font-size: 1rem; font-weight: 700; color: #58a6ff; letter-spacing: 0.05em; text-transform: uppercase; }
+    .brand-sub { font-size: 0.75rem; color: #8b949e; margin-top: 2px; }
+
+    .nav-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: #c9d1d9;
+      text-align: left;
+      padding: 12px 14px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.2s ease;
+    }
+    .nav-btn:hover { background: #161b22; border-color: #30363d; color: #ffffff; }
+    .nav-btn.active { background: rgba(88, 166, 255, 0.12); border-color: #58a6ff; color: #58a6ff; }
+    .log-counter {
+      background: #21262d;
+      color: #58a6ff;
+      font-family: monospace;
+      font-size: 0.75rem;
+      padding: 2px 6px;
+      border-radius: 10px;
+    }
+
+    /* Overlay Panels (Check Logs & About) */
+    .overlay-panel {
+      position: absolute;
+      top: 16px;
+      left: 72px;
+      right: 16px;
+      bottom: 16px;
+      max-width: 780px;
+      background: rgba(13, 17, 23, 0.96);
+      backdrop-filter: blur(12px);
+      border: 1px solid #30363d;
+      border-radius: 10px;
+      z-index: 10;
+      display: none;
+      flex-direction: column;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.85);
+      overflow: hidden;
+    }
+    .overlay-panel.active { display: flex; }
+
+    @media (max-width: 640px) {
+      .overlay-panel { left: 16px; top: 72px; }
+    }
+
+    .panel-header {
+      padding: 16px 20px;
+      background: #161b22;
+      border-bottom: 1px solid #30363d;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .panel-title { font-size: 1rem; font-weight: 600; color: #58a6ff; text-transform: uppercase; letter-spacing: 0.05em; }
+    .panel-actions { display: flex; gap: 10px; }
+    .btn-small {
+      background: #21262d;
+      border: 1px solid #30363d;
+      color: #c9d1d9;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+    .btn-small:hover { border-color: #f85149; color: #f85149; }
+
+    .panel-body {
+      padding: 20px;
+      overflow-y: auto;
+      flex: 1;
+      line-height: 1.6;
+    }
+
+    /* Telemetry Logs Table */
+    .log-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    .log-table th {
+      text-align: left;
+      padding: 10px 8px;
+      border-bottom: 1px solid #30363d;
+      color: #8b949e;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      position: sticky;
+      top: 0;
+      background: #0d1117;
+    }
+    .log-table td {
+      padding: 10px 8px;
+      border-bottom: 1px solid #21262d;
+      font-family: monospace;
+    }
+    .log-empty { color: #8b949e; text-align: center; padding: 30px; font-style: italic; }
+
+    /* About Section Styling */
+    .about-section { margin-bottom: 22px; }
+    .about-section h3 { font-size: 0.9rem; color: #58a6ff; text-transform: uppercase; margin-bottom: 8px; border-bottom: 1px solid #21262d; padding-bottom: 4px; }
+    .about-section p, .about-section li { font-size: 0.9rem; color: #c9d1d9; margin-bottom: 6px; }
+    .about-section ul { padding-left: 20px; }
+    .team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 10px; }
+    .team-card { background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 12px; }
+    .team-name { font-weight: 600; color: #ffffff; font-size: 0.95rem; }
+    .team-role { font-size: 0.8rem; color: #8b949e; margin-top: 2px; }
+
     /* Hardware Node Marker */
     .node-marker {
       width: 20px; height: 20px; border-radius: 50%;
@@ -48,26 +223,128 @@
 </head>
 <body>
 
+  <!-- Top-Left Hamburger Toggle -->
+  <button id="menu-btn" aria-label="Toggle Menu">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+
+  <!-- Navigation Drawer -->
+  <nav id="sidebar">
+    <div class="brand-header">
+      <div class="brand-title">FlowGrid 915</div>
+      <div class="brand-sub">Micro-GIS Telemetry Portal</div>
+    </div>
+    <button class="nav-btn active" id="nav-home">Home (Node 01)</button>
+    <button class="nav-btn" id="nav-logs">
+      <span>Check Logs</span>
+      <span class="log-counter" id="log-count">0</span>
+    </button>
+    <button class="nav-btn" id="nav-about">About</button>
+  </nav>
+
+  <!-- Check Logs Overlay Panel -->
+  <section class="overlay-panel" id="logs-panel">
+    <div class="panel-header">
+      <span class="panel-title">Compiled Node Telemetry Logs</span>
+      <div class="panel-actions">
+        <button class="btn-small" id="clear-logs-btn">Clear</button>
+        <button class="btn-small" id="close-logs-btn">Close</button>
+      </div>
+    </div>
+    <div class="panel-body">
+      <table class="log-table">
+        <thead>
+          <tr>
+            <th>Timestamp</th>
+            <th>Node ID</th>
+            <th>Pressure</th>
+            <th>Status</th>
+            <th>Coordinates</th>
+          </tr>
+        </thead>
+        <tbody id="log-tbody">
+          <tr><td colspan="5" class="log-empty">Awaiting incoming telemetry packets...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- About Overlay Panel -->
+  <section class="overlay-panel" id="about-panel">
+    <div class="panel-header">
+      <span class="panel-title">System Architecture & Documentation</span>
+      <div class="panel-actions">
+        <button class="btn-small" id="close-about-btn">Close</button>
+      </div>
+    </div>
+    <div class="panel-body">
+      <div class="about-section">
+        <h3>System Overview</h3>
+        <p><strong>FlowGrid 915</strong> is a decentralized pipeline hydrostatic pressure telemetry and leak detection Micro-GIS portal engineered for municipal water distribution monitoring.</p>
+      </div>
+
+      <div class="about-section">
+        <h3>Hardware & Network Architecture</h3>
+        <ul>
+          <li><strong>Edge Nodes:</strong> ESP32 (Heltec WiFi LoRa 32 V3) interfacing with 5V Analog Piezoresistive Pressure Transducers (0–1.2 MPa range) and MOSFET power-gating.</li>
+          <li><strong>Sub-GHz Link:</strong> Raw 915 MHz LoRa point-to-multipoint star topology feeding a central Wi-Fi gateway hub.</li>
+          <li><strong>Cloud & GIS Stack:</strong> Firebase Realtime Database WebSocket synchronization coupled with Mapbox GL JS vector rendering.</li>
+        </ul>
+      </div>
+
+      <div class="about-section">
+        <h3>Operator Instructions</h3>
+        <ul>
+          <li><strong>Home (Node 01):</strong> Closes active overlays and re-centers the GIS camera directly over the primary upstream reference node (<code>dev_node_01</code>).</li>
+          <li><strong>Node Inspection:</strong> Hover over any marker on the map to view its instant status badge. Click or tap a marker to lock open its full telemetry readout (MPa and GPS coordinates).</li>
+          <li><strong>Check Logs:</strong> Compiles real-time state changes across all registered pipeline nodes into a chronological audit trail.</li>
+        </ul>
+      </div>
+
+      <div class="about-section">
+        <h3>Project Development Team</h3>
+        <div class="team-grid">
+          <div class="team-card">
+            <div class="team-name">Carmel Angelo N. Hervera</div>
+            <div class="team-role">System Architecture, Embedded IoT & Software Development</div>
+          </div>
+          <div class="team-card">
+            <div class="team-name">Nathaniel Malazo</div>
+            <div class="team-role">System Strategy, Operations & Field Deployment</div>
+          </div>
+          <div class="team-card">
+            <div class="team-name">Symel Fortes</div>
+            <div class="team-role">UI/UX Architecture & Micro-GIS Visualization</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mapbox Viewport -->
   <div id="map"></div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
     import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-database.js";
 
-    // 1. MAPBOX INITIALIZATION (Token Injected)
+    // 1. MAPBOX INITIALIZATION
     mapboxgl.accessToken = 'pk.eyJ1IjoiZmxvd2dyaWQ5MTUiLCJhIjoiY212Z3owbjZzMDNibDJ5cG13aDh6cTBkYyJ9.ZIFZPkMqFyoEgv-8fThhnw';
     
+    const DEFAULT_LNG = 123.9961;
+    const DEFAULT_LAT = 12.9754;
+
     const map = new mapboxgl.Map({
       container: 'map',
       style: 'mapbox://styles/mapbox/dark-v11',
-      // REQUIRED: Replace with your extracted coordinates [Lng, Lat]
-      center: [123.9961, 12.9754], 
+      center: [DEFAULT_LNG, DEFAULT_LAT],
       zoom: 15.5,
       projection: 'globe'
     });
 
     // 2. FIREBASE INITIALIZATION
-    // REQUIRED: Replace ALL placeholder strings below with your exact Firebase project keys
     const firebaseConfig = {
       apiKey: "AIzaSyBQk20ERtOKC37cEclh7iJzosM1T79EOVo",
       authDomain: "flowgrid915.firebaseapp.com",
@@ -80,27 +357,27 @@
     
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
-    const nodeRef = ref(db, 'nodes/dev_node_01');
+    const allNodesRef = ref(db, 'nodes');
 
-    // 3. NODE MARKER AND EVENT STATE
+    // 3. PRIMARY NODE MARKER & POPUPS
     const el = document.createElement('div');
     el.className = 'node-marker marker-nominal';
     
-    // REQUIRED: Replace with your extracted coordinates [Lng, Lat]
     const marker = new mapboxgl.Marker(el)
-      .setLngLat([123.9961, 12.9754])
+      .setLngLat([DEFAULT_LNG, DEFAULT_LAT])
       .addTo(map);
 
     const hoverPopup = new mapboxgl.Popup({ closeButton: false, closeOnClick: false, offset: 15, maxWidth: '200px' });
     const clickPopup = new mapboxgl.Popup({ closeButton: true, offset: 15, maxWidth: '300px' });
 
-    // Mutable state variables to hold live telemetry for popups
-    let liveData = { status: 'Connecting...', pressure_mpa: '--', lat: 0, lng: 0 };
+    let liveData = { status: 'Connecting...', pressure_mpa: '--', lat: DEFAULT_LAT, lng: DEFAULT_LNG };
     let isInitialLoad = true;
+    let totalLogs = 0;
+    const previousNodeSignatures = {};
 
-    // 4. DOM EVENT LISTENERS (Hover & Click Architecture)
+    // 4. MARKER INTERACTION LISTENERS
     el.addEventListener('mouseenter', () => {
-      if (clickPopup.isOpen()) return; // Do not show hover if clicked expanded view is active
+      if (clickPopup.isOpen()) return;
       const badgeClass = liveData.status === 'nominal' ? 'status-nominal' : 'status-alert';
       hoverPopup.setLngLat(marker.getLngLat())
         .setHTML(`<span class="status-badge ${badgeClass}">${liveData.status}</span>`)
@@ -111,13 +388,11 @@
       hoverPopup.remove();
     });
 
-   el.addEventListener('click', (e) => {
-      e.stopPropagation(); // PREVENTS MAP FROM INSTANTLY CLOSING THE POPUP
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
       hoverPopup.remove();
       
       const badgeClass = liveData.status === 'nominal' ? 'status-nominal' : 'status-alert';
-      
-      // Enforce number type parsing to prevent .toFixed() exceptions if Firebase saved data as strings
       const safeLat = Number(liveData.lat) || 0;
       const safeLng = Number(liveData.lng) || 0;
 
@@ -131,35 +406,152 @@
         .addTo(map);
     });
 
-    // 5. RTDB TELEMETRY LISTENER
-    onValue(nodeRef, (snapshot) => {
-      const data = snapshot.val();
-      if (!data) return; // Silent fail if database node is missing
+    // 5. DASHBOARD NAVIGATION LOGIC
+    const menuBtn = document.getElementById('menu-btn');
+    const sidebar = document.getElementById('sidebar');
+    const navHome = document.getElementById('nav-home');
+    const navLogs = document.getElementById('nav-logs');
+    const navAbout = document.getElementById('nav-about');
+    const logsPanel = document.getElementById('logs-panel');
+    const aboutPanel = document.getElementById('about-panel');
+    const logTbody = document.getElementById('log-tbody');
+    const logCountEl = document.getElementById('log-count');
 
-      liveData = data; // Update state for popups
+    function setActiveNav(activeBtn) {
+      [navHome, navLogs, navAbout].forEach(btn => btn.classList.remove('active'));
+      activeBtn.classList.add('active');
+    }
 
-      // Update Marker Color
+    function closePanels() {
+      logsPanel.classList.remove('active');
+      aboutPanel.classList.remove('active');
+    }
+
+    menuBtn.addEventListener('click', () => {
+      menuBtn.classList.toggle('open');
+      sidebar.classList.toggle('open');
+    });
+
+    // HOME: Return to Node 1
+    navHome.addEventListener('click', () => {
+      setActiveNav(navHome);
+      closePanels();
+      sidebar.classList.remove('open');
+      menuBtn.classList.remove('open');
+
+      const targetLng = Number(liveData.lng) || DEFAULT_LNG;
+      const targetLat = Number(liveData.lat) || DEFAULT_LAT;
+
+      map.flyTo({
+        center: [targetLng, targetLat],
+        zoom: 16,
+        essential: true
+      });
+    });
+
+    // CHECK LOGS: Open Compiled Telemetry Table
+    navLogs.addEventListener('click', () => {
+      setActiveNav(navLogs);
+      aboutPanel.classList.remove('active');
+      logsPanel.classList.add('active');
+      sidebar.classList.remove('open');
+      menuBtn.classList.remove('open');
+    });
+
+    // ABOUT: Open System Documentation & Team Credits
+    navAbout.addEventListener('click', () => {
+      setActiveNav(navAbout);
+      logsPanel.classList.remove('active');
+      aboutPanel.classList.add('active');
+      sidebar.classList.remove('open');
+      menuBtn.classList.remove('open');
+    });
+
+    document.getElementById('close-logs-btn').addEventListener('click', () => {
+      logsPanel.classList.remove('active');
+      setActiveNav(navHome);
+    });
+
+    document.getElementById('close-about-btn').addEventListener('click', () => {
+      aboutPanel.classList.remove('active');
+      setActiveNav(navHome);
+    });
+
+    document.getElementById('clear-logs-btn').addEventListener('click', () => {
+      logTbody.innerHTML = '<tr><td colspan="5" class="log-empty">Logs cleared. Awaiting new telemetry packets...</td></tr>';
+      totalLogs = 0;
+      logCountEl.textContent = '0';
+    });
+
+    // 6. MULTI-NODE LOGGING & PRIMARY NODE TELEMETRY LISTENER
+    function appendLogEntry(nodeId, nodeData) {
+      if (totalLogs === 0) {
+        logTbody.innerHTML = '';
+      }
+      totalLogs++;
+      logCountEl.textContent = totalLogs;
+
+      const now = new Date();
+      const timestamp = now.toLocaleTimeString([], { hour12: false }) + '.' + String(now.getMilliseconds()).padStart(3, '0');
+      const safeLat = Number(nodeData.lat) || 0;
+      const safeLng = Number(nodeData.lng) || 0;
+      const badgeClass = nodeData.status === 'nominal' ? 'status-nominal' : 'status-alert';
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${timestamp}</td>
+        <td style="color:#58a6ff;font-weight:600;">${nodeId}</td>
+        <td>${nodeData.pressure_mpa ?? '--'} MPa</td>
+        <td><span class="status-badge ${badgeClass}">${nodeData.status ?? 'unknown'}</span></td>
+        <td>${safeLat.toFixed(4)}, ${safeLng.toFixed(4)}</td>
+      `;
+
+      // Prepend newest update at the top of the table
+      logTbody.insertBefore(tr, logTbody.firstChild);
+    }
+
+    onValue(allNodesRef, (snapshot) => {
+      const nodesObj = snapshot.val();
+      if (!nodesObj) return;
+
+      // Compile updates across all nodes in the database
+      Object.entries(nodesObj).forEach(([nodeId, nodeData]) => {
+        if (!nodeData || typeof nodeData !== 'object') return;
+        const signature = JSON.stringify(nodeData);
+        if (previousNodeSignatures[nodeId] !== signature) {
+          previousNodeSignatures[nodeId] = signature;
+          appendLogEntry(nodeId, nodeData);
+        }
+      });
+
+      // Update Primary Node (dev_node_01) on Map
+      const data = nodesObj['dev_node_01'];
+      if (!data) return;
+
+      liveData = data;
+      const safeLat = Number(data.lat) || DEFAULT_LAT;
+      const safeLng = Number(data.lng) || DEFAULT_LNG;
+
       el.className = data.status === 'nominal' ? 'node-marker marker-nominal' : 'node-marker marker-alert';
+      marker.setLngLat([safeLng, safeLat]);
 
-      // Update Coordinate Geometry
-      marker.setLngLat([data.lng, data.lat]);
-      
-      // Update open popups dynamically
       if (hoverPopup.isOpen() || clickPopup.isOpen()) {
         const badgeClass = data.status === 'nominal' ? 'status-nominal' : 'status-alert';
-        if (hoverPopup.isOpen()) hoverPopup.setHTML(`<span class="status-badge ${badgeClass}">${data.status}</span>`);
+        if (hoverPopup.isOpen()) {
+          hoverPopup.setHTML(`<span class="status-badge ${badgeClass}">${data.status}</span>`);
+        }
         if (clickPopup.isOpen()) {
           clickPopup.setHTML(`
             <div class="popup-title">Node: dev_node_01</div>
             <div class="metric-row"><span class="metric-label">Status</span><span class="status-badge ${badgeClass}">${data.status}</span></div>
             <div class="metric-row"><span class="metric-label">Pressure</span><span class="metric-val">${data.pressure_mpa} MPa</span></div>
-            <div class="metric-row"><span class="metric-label">Coordinates</span><span class="metric-val">${data.lat.toFixed(4)}, ${data.lng.toFixed(4)}</span></div>
+            <div class="metric-row"><span class="metric-label">Coordinates</span><span class="metric-val">${safeLat.toFixed(4)}, ${safeLng.toFixed(4)}</span></div>
           `);
         }
       }
 
       if (isInitialLoad || data.status !== 'nominal') {
-        map.flyTo({ center: [data.lng, data.lat], zoom: 15.5, essential: true });
+        map.flyTo({ center: [safeLng, safeLat], zoom: 15.5, essential: true });
         isInitialLoad = false;
       }
     });
